@@ -1,16 +1,11 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
+import 'package:flutter/material.dart';
 import 'package:workout_tracker/models/exercise_modle.dart';
 import 'package:workout_tracker/models/workout_modle.dart';
 
-class WorkoutData {
-  List<WorkoutModle> workoutList = [
-    // default example for the workout list
-    /*big list workoutList[contain workoutModle[ExerciseModle]] */
-    WorkoutModle(name: 'back', exercises: [
-      ExerciseModle(name: 'dead lift', reps: '8', sets: '2', wieght: '100')
-    ])
-  ];
+class WorkoutData extends ChangeNotifier {
+  final List<WorkoutModle> _workouts = [];
 
 // get the list of workouts
   List<WorkoutModle> getListOfWorkouts() {
@@ -19,17 +14,17 @@ class WorkoutData {
 
 // add workouts
   void addWorkoutList(String name) {
-    workoutList.add(WorkoutModle(name: name, exercises: []));
+    _workouts.add(WorkoutModle(name: name, exercises: []));
+    notifyListeners();
   }
 
-// add a new exercise
-  void addNewExercise(
-      String WorkoutName, String reps, String wieght, String sets) {
+// add a new exercise to a workout
+  void addNewExercise(String WorkoutName, ExerciseModle exercise) {
 // find the relavint workout
     WorkoutModle relavintWorkout = getRelavintWorkout(WorkoutName);
 
-    relavintWorkout.exercises.add(ExerciseModle(
-        name: WorkoutName, reps: reps, sets: sets, wieght: wieght));
+    relavintWorkout.exercises.add(exercise);
+    notifyListeners();
   }
 
 // get the lenght of a given workout
@@ -45,11 +40,12 @@ class WorkoutData {
 
     // check off boolean to show user is completed exercise
     relavintExercise.isCompleted = !relavintExercise.isCompleted;
+    notifyListeners();
   }
 
 // return the relavint workout
   WorkoutModle getRelavintWorkout(String WorkoutName) {
-    WorkoutModle relavintWorkout = workoutList
+    WorkoutModle relavintWorkout = _workouts
         .firstWhere((WorkoutModle) => WorkoutModle.name == WorkoutName);
 
     return relavintWorkout;
